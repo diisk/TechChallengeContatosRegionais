@@ -3,7 +3,7 @@ using Application.Interfaces;
 using Application.Mappers;
 using Application.Services;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.DbContexts;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

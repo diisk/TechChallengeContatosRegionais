@@ -1,6 +1,10 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs.Auth;
+using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Exceptions;
+using Domain.Exceptions.AuthExceptions;
+using Domain.Interfaces.UsuarioInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,30 +26,24 @@ namespace Application.Services
             this.tokenService = tokenService;
         }
 
-        public string logar(string email, string senha)
+        public string logar(string login, string senha)
         {
-            Usuario? user = usuarioRepository.FindByEmail(email);
+            Usuario? user = usuarioRepository.FindByLogin(login);
             if (user != null && cryptoService.VerificarSenhaHasheada(senha, user.SenhaHasheada))
             {
                 return tokenService.GetToken(user);
             }
-            throw new Exception("Email ou senha incorretos.");
+            throw new DadosIncorretosException();
         }
 
-        public Usuario registrar(string email, string senha)
+        public Usuario registrar(Usuario usuario)
         {
-            Usuario? user = usuarioRepository.FindByEmail(email);
-            if (user != null)
-                throw new Exception("Já existe um usuário cadastrado com esse email.");
-
-            var senhaHasheada = cryptoService.HashearSenha(senha);
-
-            var usuario = new Usuario { Email = email, SenhaHasheada = senhaHasheada };
-
             usuario.Validate();
+            Usuario? user = usuarioRepository.FindByLogin(usuario.Login);
+            if (user != null)
+                throw new LoginIndisponivelException();
 
             return usuarioRepository.Save(usuario);
-
         }
     }
 }

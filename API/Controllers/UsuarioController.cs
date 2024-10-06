@@ -1,8 +1,10 @@
 ﻿using Application.DTOs;
 using Application.DTOs.Auth;
 using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
-using Domain.Interfaces;
+using Domain.Entities;
+using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,28 +18,32 @@ namespace API.Controllers
         private readonly IAuthService authService;
         private readonly IMapper mapper;
         private readonly IResponseService responseService;
+        private readonly ICryptoService cryptoService;
 
-        public UsuarioController(IAuthService authService, IMapper mapper, IResponseService responseService)
+        public UsuarioController(IAuthService authService, IMapper mapper, IResponseService responseService, ICryptoService cryptoService)
         {
             this.authService = authService;
             this.mapper = mapper;
             this.responseService = responseService;
+            this.cryptoService = cryptoService;
         }
 
         [HttpPost("logar")]
         [AllowAnonymous]
-        public ActionResult<BaseResponse<string>> login([FromBody] LogarRequest request)
+        public ActionResult<BaseResponse<LogarResponse>> login([FromBody] LogarRequest request)
 
         {
-            var token = authService.logar(request.Email, request.Senha);
-            return responseService.Ok(token);
+            var token = authService.logar(request.Login, request.Senha);
+            return responseService.Ok(new LogarResponse { Token = token });
         }
 
         [HttpPost("registrar")]
         [AllowAnonymous]
         public ActionResult<BaseResponse<string>> registrar([FromBody] RegistrarRequest request)
         {
-            authService.registrar(request.Email,request.Senha);
+            var usuario = mapper.Map<Usuario>(request);
+            usuario.SenhaHasheada = cryptoService.HashearSenha(request.Senha);
+            authService.registrar(usuario);
             return responseService.NoContent<string>();
         }
     }

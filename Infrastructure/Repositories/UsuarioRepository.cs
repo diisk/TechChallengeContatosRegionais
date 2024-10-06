@@ -1,5 +1,5 @@
 ﻿using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.DbContexts;
 
 namespace Infrastructure.Repositories
@@ -10,9 +10,9 @@ namespace Infrastructure.Repositories
         {
         }
 
-        public Usuario? FindByEmail(string email)
+        public Usuario? FindByLogin(string login)
         {
-            return onlyReadDbSet.FirstOrDefault(x => x.Email == email);
+            return onlyReadDbSet.FirstOrDefault(x => x.Login == login);
         }
     }
 }

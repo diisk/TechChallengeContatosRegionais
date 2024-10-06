@@ -1,9 +1,9 @@
 ﻿using Domain.Entities;
 
-namespace Domain.Interfaces
+namespace Domain.Interfaces.UsuarioInterfaces
 {
     public interface IUsuarioRepository : IRepository<Usuario>
     {
-        Usuario? FindByEmail(string email);
+        Usuario? FindByLogin(string email);
     }
 }

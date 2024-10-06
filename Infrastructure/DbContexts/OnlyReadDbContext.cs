@@ -7,7 +7,8 @@ namespace Infrastructure.DbContexts
     {
 
         public OnlyReadDbContext(DbContextOptions<OnlyReadDbContext> options):base(options) {}
-        public DbSet<Usuario> usuarioSet { get; set; }
+        public DbSet<Usuario> UsuarioSet { get; set; }
+        public DbSet<Area> AreaSet { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

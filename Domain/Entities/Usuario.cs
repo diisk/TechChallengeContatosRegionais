@@ -7,8 +7,9 @@ namespace Domain.Entities
     public class Usuario:EntityBase
     {
 
-        [EmailAddress]
-        public required string Email { get; set; }
+        [Required]
+        public required string Login { get; set; }
+        [Required]
         public required string SenhaHasheada { get; set; }
 
     }

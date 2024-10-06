@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Application.Exceptions;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities
 {
@@ -8,7 +9,7 @@ namespace Domain.Entities
         public int ID { get; set; }
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime? Updated { get; set; }
-        public bool Deleted { get; set; } = false;
+        public bool Removed { get; private set; } = false;
 
 
         public virtual void Validate()
@@ -19,8 +20,13 @@ namespace Domain.Entities
             bool isValid = Validator.TryValidateObject(this, validationContext, validationResults, validateAllProperties: true);
             if (!isValid)
             {
-                throw new ValidationException($"Validation failed for {GetType().Name} object: " + string.Join(", ", validationResults));
+                throw new ValidacaoException($"Validation failed for {GetType().Name} object: " + string.Join(", ", validationResults));
             }
+        }
+
+        public void Remove()
+        {
+            Removed = true;
         }
     }
 }
