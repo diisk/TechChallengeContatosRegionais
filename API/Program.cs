@@ -2,6 +2,7 @@ using Application.DTOs.Auth;
 using Application.Interfaces;
 using Application.Mappers;
 using Application.Services;
+using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.DbContexts;
@@ -42,7 +43,15 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddAutoMapper(typeof(BaseMapping<RegistrarRequest,Usuario>));
+builder.Services.AddAutoMapper(typeof(BaseMapper<RegistrarRequest,Usuario>));
+var mapperConfig = new MapperConfiguration(cfg =>
+{
+    AtualizarContatoRequestToContatoMapper.ConfigureMapping(cfg);
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddTransient<AtualizarContatoRequestToContatoMapper>();
 
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
