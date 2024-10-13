@@ -14,6 +14,11 @@ namespace Application.Services
 {
     public class TokenService : ITokenService
     {
+
+        private const string CLAIM_TYPE_ID = "Identificador";
+        private const string CONFIG_KEY_SECRET = "SecretJwt";
+        private const string CONFIG_KEY_CRYPTO = "ChaveCrypto";
+
         private readonly IConfiguration configuration;
         private readonly ICryptoService cryptoService;
 
@@ -26,13 +31,13 @@ namespace Application.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var secret = Encoding.ASCII.GetBytes(configuration.GetValue<string>("SecretJwt")!);
-            var chaveCriptografia = configuration.GetValue<string>("ChaveCrypto")!;
+            var secret = Encoding.ASCII.GetBytes(configuration.GetValue<string>(CONFIG_KEY_SECRET)!);
+            var chaveCriptografia = configuration.GetValue<string>(CONFIG_KEY_CRYPTO)!;
 
             var tokenPropriedades = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim("Identificador",cryptoService.CriptografarString(usuario.ID.ToString(),chaveCriptografia))
+                    new Claim(CLAIM_TYPE_ID,cryptoService.CriptografarString(usuario.ID.ToString(),chaveCriptografia))
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(8),
@@ -44,6 +49,17 @@ namespace Application.Services
 
             var token = tokenHandler.CreateToken(tokenPropriedades);
             return tokenHandler.WriteToken(token);
+        }
+
+        public int GetUserIdFromClaimsPrincipal(ClaimsPrincipal user)
+        {
+            var chaveCriptografia = configuration.GetValue<string>(CONFIG_KEY_CRYPTO)!;
+
+            var idEncryptado = user.FindFirst(CLAIM_TYPE_ID)!.Value;
+
+            var id = Convert.ToInt32(cryptoService.DescriptografarString(idEncryptado, chaveCriptografia));
+
+            return id;
         }
     }
 }

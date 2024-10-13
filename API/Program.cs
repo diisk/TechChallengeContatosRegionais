@@ -1,9 +1,13 @@
+using API.Middlewares;
+using Application.DTOs.AreaDtos;
 using Application.DTOs.Auth;
 using Application.Interfaces;
 using Application.Mappers;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces.AreaInterfaces;
+using Domain.Interfaces.ContatoInterfaces;
 using Domain.Interfaces.UsuarioInterfaces;
 using Infrastructure.DbContexts;
 using Infrastructure.Repositories;
@@ -11,12 +15,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Net;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new AuthorizeFilter());
@@ -36,17 +43,26 @@ builder.Services.AddDbContext<OnlyWriteDbContext>(options =>
 }, ServiceLifetime.Scoped);
 
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 
 
-builder.Services.AddScoped<IResponseService, ResponseService>();
+builder.Services.AddTransient<IResponseService, ResponseService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddAutoMapper(typeof(BaseMapper<RegistrarRequest,Usuario>));
+builder.Services.AddScoped<IAreaService, AreaService>();
+builder.Services.AddScoped<IContatoService, ContatoService>();
+
+builder.Services.AddAutoMapper(typeof(CustomMapper<RegistrarRequest,Usuario>));
 var mapperConfig = new MapperConfiguration(cfg =>
 {
     AtualizarContatoRequestToContatoMapper.ConfigureMapping(cfg);
+
+    cfg.CreateMap<RegistrarRequest, Usuario>();
+    cfg.CreateMap<NovaAreaRequest, Area>();
+    cfg.CreateMap<Area, AreaResponse>();
 });
 
 IMapper mapper = mapperConfig.CreateMapper();
@@ -73,6 +89,24 @@ builder.Services.AddAuthentication(x =>
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = false,
             ValidateAudience = false
+        };
+        x.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                return ResponseService.GetPatterResponse(
+                    context.HttpContext,
+                    HttpStatusCode.Unauthorized,
+                    "Você não tem autorização para acessar este recurso.");
+            },
+            OnForbidden = context =>
+            {
+                return ResponseService.GetPatterResponse(
+                    context.HttpContext,
+                    HttpStatusCode.Forbidden,
+                    "Você não tem permissão para acessar este recurso.");
+            }
         };
     });
 
@@ -118,5 +152,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();

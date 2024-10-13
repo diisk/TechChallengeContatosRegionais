@@ -49,7 +49,7 @@ namespace Application.Test.Tests
             var mockTokenService = new Mock<ITokenService>();
 
             Usuario usuario = fixture.UsuarioValido;
-            usuario.SenhaHasheada = senha;
+            usuario.Senha = senha;
 
             var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
 
@@ -122,7 +122,7 @@ namespace Application.Test.Tests
             usuario.Login = "login";
 
             mockRepository.Setup(repo => repo.FindByLogin(usuario.Login)).Returns(usuario);
-            mockCryptoService.Setup(repo => repo.VerificarSenhaHasheada("senha", usuario.SenhaHasheada)).Returns(true);
+            mockCryptoService.Setup(repo => repo.VerificarSenhaHasheada("senha", usuario.Senha)).Returns(true);
             mockTokenService.Setup(repo => repo.GetToken(usuario)).Returns(token);
             
 

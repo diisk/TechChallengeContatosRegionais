@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.DTOs.Auth;
+using Application.DTOs.AuthDtos;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class UsuarioController : ControllerBase
     {
@@ -31,20 +32,19 @@ namespace API.Controllers
         [HttpPost("logar")]
         [AllowAnonymous]
         public ActionResult<BaseResponse<LogarResponse>> login([FromBody] LogarRequest request)
-
         {
+            authService.GetUsuarioLogado();
             var token = authService.logar(request.Login, request.Senha);
             return responseService.Ok(new LogarResponse { Token = token });
         }
 
         [HttpPost("registrar")]
         [AllowAnonymous]
-        public ActionResult<BaseResponse<string>> registrar([FromBody] RegistrarRequest request)
+        public ActionResult<BaseResponse<RegistrarResponse>> registrar([FromBody] RegistrarRequest request)
         {
             var usuario = mapper.Map<Usuario>(request);
-            usuario.SenhaHasheada = cryptoService.HashearSenha(request.Senha);
-            authService.registrar(usuario);
-            return responseService.NoContent<string>();
+            var retorno = authService.registrar(usuario);
+            return responseService.Ok(new RegistrarResponse { Id = retorno.ID});
         }
     }
 }

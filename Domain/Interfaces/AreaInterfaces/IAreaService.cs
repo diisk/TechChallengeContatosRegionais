@@ -9,7 +9,7 @@ namespace Domain.Interfaces.AreaInterfaces
 {
     public interface IAreaService
     {
-        Area CadastrarArea(Area area);
+        List<Area> CadastrarAreas(List<Area> areas);
         Area BuscarPorCodigoArea(int codigoArea);
     }
 }

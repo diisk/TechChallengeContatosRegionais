@@ -2,11 +2,11 @@
 
 namespace Application.Mappers
 {
-    public abstract class BaseMapper<S, T>
+    public abstract class CustomMapper<S, T>
     {
         private readonly IMapper mapper;
 
-        protected BaseMapper(IMapper mapper)
+        protected CustomMapper(IMapper mapper)
         {
             this.mapper = mapper;
         }

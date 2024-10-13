@@ -15,7 +15,5 @@ namespace Application.DTOs
 
         public T? Data { get; set; }
 
-        public List<T>? Errors { get; set; }
-
     }
 }

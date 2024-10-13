@@ -5,7 +5,7 @@ using Domain.Interfaces.AreaInterfaces;
 
 namespace Application.Mappers
 {
-    public class AtualizarContatoRequestToContatoMapper : BaseMapper<AtualizarContatoRequest, Contato>
+    public class AtualizarContatoRequestToContatoMapper : CustomMapper<AtualizarContatoRequest, Contato>
     {
         private readonly IAreaService areaService;
 

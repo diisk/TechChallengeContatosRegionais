@@ -9,6 +9,7 @@ namespace Domain.Interfaces
         T? FindById(int id);
 
         T Save(T entity);
+        List<T> SaveAll(List<T> entities);
 
         void Delete(T entity);
 

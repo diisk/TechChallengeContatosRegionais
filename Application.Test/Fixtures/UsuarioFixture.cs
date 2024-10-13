@@ -16,7 +16,7 @@ namespace Application.Test.Fixtures
                 return new Usuario
                 {
                     Login = "teste",
-                    SenhaHasheada = "senha"
+                    Senha = "senha"
                 };
             }
         }

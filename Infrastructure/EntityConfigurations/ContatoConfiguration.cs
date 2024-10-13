@@ -9,7 +9,9 @@ namespace Infrastructure.Configurations
         public void Configure(EntityTypeBuilder<Contato> builder)
         {
             builder.HasOne(c => c.Area)
-                .WithOne().HasForeignKey<Area>(a => a.Codigo);
+                .WithMany()
+                .HasForeignKey(c => c.AreaId)
+                .IsRequired();
         }
     }
 }

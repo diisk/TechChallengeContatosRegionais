@@ -6,5 +6,6 @@ namespace Domain.Interfaces.UsuarioInterfaces
     {
         string logar(string login, string senha);
         Usuario registrar(Usuario usuario);
+        Usuario? GetUsuarioLogado();
     }
 }

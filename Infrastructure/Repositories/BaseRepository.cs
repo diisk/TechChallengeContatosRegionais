@@ -49,6 +49,11 @@ namespace Infrastructure.Repositories
 
         public T Save(T entity)
         {
+            return GenericSave(entity,true);
+        }
+
+        public T GenericSave(T entity, bool saveChanges)
+        {
             if (entity.ID > 0)
             {
                 onlyWriteDbSet.Update(entity);
@@ -57,10 +62,24 @@ namespace Infrastructure.Repositories
             {
                 onlyWriteDbSet.Add(entity);
             }
-            onlyWriteDbContext.SaveChanges();
+
+            if (saveChanges)
+            {
+                onlyWriteDbContext.SaveChanges();
+            }
+            
             return entity;
         }
 
+        public List<T> SaveAll(List<T> entities)
+        {
+            foreach (var entity in entities)
+            {
+                GenericSave(entity,false);
+            }
+            onlyWriteDbContext.SaveChanges();
+            return entities;
+        }
 
         public ICollection<T> UpdateRange(ICollection<T> entities)
         {

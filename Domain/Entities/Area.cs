@@ -2,16 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
+    [Table("Areas")]
     public class Area : EntityBase
     {
         [Range(10,99, ErrorMessage = "O código de área deve conter 2 números")]
         public required int Codigo { get; set; }
+        [EnumDataType(typeof(RegiaoBrasil), ErrorMessage = "Região inválida.")]
         public required RegiaoBrasil Regiao {  get; set; }
 
         [Required]

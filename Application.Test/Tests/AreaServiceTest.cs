@@ -21,7 +21,7 @@ namespace Application.Test.Tests
         [Theory]
         [InlineData(1)]
         [InlineData(100)]
-        public void CadastrarArea_QuandoCodigoInvalido_DeveLancarExcecao(int codigo)
+        public void CadastrarAreas_QuandoCodigoInvalido_DeveLancarExcecao(int codigo)
         {
             //GIVEN
             var mockRepository = new Mock<IAreaRepository>();
@@ -33,7 +33,7 @@ namespace Application.Test.Tests
             var areaService = new AreaService(mockRepository.Object);
 
             //WHEN & THEN
-            Assert.Throws<ValidacaoException>(() => areaService.CadastrarArea(area));
+            Assert.Throws<ValidacaoException>(() => areaService.CadastrarAreas([area]));
         }
 
         [Theory]
@@ -41,7 +41,7 @@ namespace Application.Test.Tests
         [InlineData("")]
         [InlineData("S")]
         [InlineData("SSS")]
-        public void CadastrarArea_QuandoSiglaInvalida_DeveLancarExcecao(string siglaEstado)
+        public void CadastrarAreas_QuandoSiglaInvalida_DeveLancarExcecao(string siglaEstado)
         {
             //GIVEN
             var mockRepository = new Mock<IAreaRepository>();
@@ -52,44 +52,88 @@ namespace Application.Test.Tests
             var areaService = new AreaService(mockRepository.Object);
 
             //WHEN & THEN
-            Assert.Throws<ValidacaoException>(() => areaService.CadastrarArea(area));
+            Assert.Throws<ValidacaoException>(() => areaService.CadastrarAreas([area]));
         }
 
         [Fact]
-        public void CadastrarArea_QuandoCodigoAreaJaCadastrado_DeveLancarExcecao()
+        public void CadastrarAreas_QuandoCodigoAreaJaCadastrado_DeveLancarExcecao()
         {
             //GIVEN
             var mockRepository = new Mock<IAreaRepository>();
 
             Area area = fixture.AreaValida;
+            var codigos = new List<int>();
+            codigos.Add(area.Codigo);
 
-            mockRepository.Setup(repo => repo.FindByCodigo(area.Codigo)).Returns(area);
+            mockRepository.Setup(repo => repo.FindByCodigo(codigos)).Returns([area]);
 
             var areaService = new AreaService(mockRepository.Object);
 
             //WHEN & THEN
-            Assert.Throws<CodigoAreaCadastradoException>(() => areaService.CadastrarArea(area));
+            Assert.Throws<CodigoAreaCadastradoException>(() => areaService.CadastrarAreas([area]));
         }
 
         [Fact]
-        public void CadastrarArea_QuandoDadosValidos_DeveRetornaNovaEntidade()
+        public void CadastrarAreas_QuandoDadosCodigoDuplicado_DeveRetornaNovaListaEntidade()
         {
             //GIVEN
             var mockRepository = new Mock<IAreaRepository>();
 
-            Area area = fixture.AreaValida;
-            Area areaRetorno = fixture.AreaValida;
-            areaRetorno.ID = 1;
+            Area area1 = fixture.AreaValida;
+            Area area2 = fixture.AreaValida;
 
-            mockRepository.Setup(repo => repo.Save(area)).Returns(areaRetorno);
+            List<int> codigos = [area1.Codigo, area2.Codigo];
+            List<Area> areas = [area1, area2];
+
+            mockRepository.Setup(repo => repo.FindByCodigo(codigos)).Returns([]);
+
+            var areaService = new AreaService(mockRepository.Object);
+
+            //WHEN & THEN
+            Assert.Throws<CodigoAreaDuplicadoException>(() => areaService.CadastrarAreas(areas));
+        }
+
+        [Fact]
+        public void CadastrarAreas_QuandoDadosVazios_DeveRetornaNovaListaEntidade()
+        {
+            //GIVEN
+            var mockRepository = new Mock<IAreaRepository>();
+
+            var areaService = new AreaService(mockRepository.Object);
+
+            //WHEN & THEN
+            Assert.Throws<ConteudoDiferenteException>(() => areaService.CadastrarAreas([]));
+        }
+
+        [Fact]
+        public void CadastrarAreas_QuandoDadosValidos_DeveRetornaNovaListaEntidade()
+        {
+            //GIVEN
+            var mockRepository = new Mock<IAreaRepository>();
+
+            Area area1 = fixture.AreaValida;
+            area1.Codigo = 11;
+            Area area2 = fixture.AreaValida;
+            area2.Codigo = 31;
+            Area areaRetorno1 = fixture.AreaValida;
+            areaRetorno1.ID = 1;
+            Area areaRetorno2 = fixture.AreaValida;
+            areaRetorno2.ID = 2;
+
+            List<int> codigos = [area1.Codigo, area2.Codigo];
+            List<Area> areas = [area1, area2];
+            List<Area> areasRetorno = [areaRetorno1, areaRetorno2];
+
+            mockRepository.Setup(repo => repo.SaveAll(areas)).Returns(areasRetorno);
+            mockRepository.Setup(repo => repo.FindByCodigo(codigos)).Returns([]);
 
             var areaService = new AreaService(mockRepository.Object);
 
             //WHEN
-            var retorno = areaService.CadastrarArea(area);
+            var retorno = areaService.CadastrarAreas([area1, area2]);
 
             //THEN
-            Assert.Equal(retorno.ID, areaRetorno.ID);
+            Assert.Equal(retorno, areasRetorno);
         }
 
         [Fact]
@@ -98,8 +142,10 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IAreaRepository>();
             var codigoArea = 11;
+            List<int> codigos = [codigoArea];
 
             var areaService = new AreaService(mockRepository.Object);
+            mockRepository.Setup(repo => repo.FindByCodigo(codigos)).Returns([]);
 
             //WHEN & THEN
             Assert.Throws<CodigoAreaNaoCadastradoException>(() => areaService.BuscarPorCodigoArea(codigoArea));
@@ -113,8 +159,10 @@ namespace Application.Test.Tests
             var area = fixture.AreaValida;
             var codigoArea = 11;
             area.Codigo = codigoArea;
+            var codigos = new List<int>();
+            codigos.Add(codigoArea);
 
-            mockRepository.Setup(repo=>repo.FindByCodigo(codigoArea)).Returns(area);
+            mockRepository.Setup(repo => repo.FindByCodigo(codigos)).Returns([area]);
 
             var areaService = new AreaService(mockRepository.Object);
 

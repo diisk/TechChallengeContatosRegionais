@@ -1,6 +1,7 @@
 ﻿using Application.DTOs;
-
+using Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 
 namespace Application.Interfaces

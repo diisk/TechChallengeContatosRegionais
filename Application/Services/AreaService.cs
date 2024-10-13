@@ -1,7 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.Exceptions;
+using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Exceptions.AreaExceptions;
 using Domain.Interfaces.AreaInterfaces;
+using Domain.Interfaces.UsuarioInterfaces;
 
 namespace Application.Services
 {
@@ -16,20 +18,33 @@ namespace Application.Services
 
         public Area BuscarPorCodigoArea(int codigoArea)
         {
-            var area = areaRepository.FindByCodigo(codigoArea);
-            if (area == null) throw new CodigoAreaNaoCadastradoException();
+            var area = areaRepository.FindByCodigo([codigoArea]);
+            if (area.Count==0) throw new CodigoAreaNaoCadastradoException();
 
-            return area;
+            return area.First();
         }
 
-        public Area CadastrarArea(Area area)
+        public List<Area> CadastrarAreas(List<Area> areas)
         {
-            area.Validate();
+            if (areas.Count == 0)
+            {
+                throw new ConteudoDiferenteException();
+            }
 
-            if (areaRepository.FindByCodigo(area.Codigo) != null)
-                throw new CodigoAreaCadastradoException();
+            List<int> codigos = new List<int>();
+            foreach (Area area in areas) {
+                area.Validate();
 
-            return areaRepository.Save(area);
+                if (codigos.Contains(area.Codigo))
+                    throw new CodigoAreaDuplicadoException();
+
+                codigos.Add(area.Codigo);
+            }
+
+            if (areaRepository.FindByCodigo(codigos).Count > 0)
+                throw new CodigoAreaCadastradoException(codigos);
+
+            return areaRepository.SaveAll(areas);
         }
     }
 }

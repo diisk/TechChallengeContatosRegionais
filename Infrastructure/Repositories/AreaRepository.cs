@@ -10,9 +10,9 @@ namespace Infrastructure.Repositories
         {
         }
 
-        public Area? FindByCodigo(int codigo)
+        public List<Area> FindByCodigo(List<int> codigos)
         {
-            return onlyReadDbSet.FirstOrDefault(x => x.Codigo == codigo);
+            return onlyReadDbSet.Where(x => codigos.Contains(x.Codigo)).ToList();
         }
 
     }
