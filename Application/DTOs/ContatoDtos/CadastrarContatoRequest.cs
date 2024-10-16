@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.ContatoDtos
 {
-    public class AtualizarContatoRequest
+    public class CadastrarContatoRequest
     {
-        public string? Nome { get; set; }
-        public int? Telefone { get; set; }
-        public int? CodigoArea { get; set; }
+        public required string Nome { get; set; }
+        public required int Telefone { get; set; }
+        public int CodigoArea { get; set; }
     }
 }

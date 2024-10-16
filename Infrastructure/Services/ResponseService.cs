@@ -35,13 +35,13 @@ namespace Application.Services
             return context.Response.WriteAsync(JsonSerializer.Serialize(response, options));
         }
 
-        ActionResult<BaseResponse<T>> IResponseService.NoContent<T>()
+        ActionResult<BaseResponse<T>> IResponseService.Ok<T>()
         {
             return new OkObjectResult(new BaseResponse<T>
             {
                 Success = true,
-                Message = "Success, but no content",
-                Status = 204,
+                Message = "Success",
+                Status = 200,
             });
         }
 
@@ -50,7 +50,7 @@ namespace Application.Services
             return new OkObjectResult(new BaseResponse<T>
             {
                 Success = true,
-                Message = "Succes",
+                Message = "Success",
                 Status = 200,
                 Data = data
             });

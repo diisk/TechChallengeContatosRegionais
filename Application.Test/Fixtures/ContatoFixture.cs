@@ -16,6 +16,7 @@ namespace Application.Test.Fixtures
             {
                 return new Contato
                 {
+                    CodigoArea = 31,
                     Area = new Area
                     {
                         Codigo = 31,

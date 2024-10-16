@@ -15,9 +15,12 @@ namespace Infrastructure.Repositories
             return onlyReadDbSet.Where(c => !c.Removed && c.Area.Codigo == codigoArea).ToList();
         }
 
-        public Contato? FindByTelefone(int telefone)
+        public Contato? FindByCodigoAreaAndTelefone(int codigoArea, int telefone)
         {
-            return onlyReadDbSet.FirstOrDefault(c => c.Telefone == telefone);
+            return onlyReadDbSet.FirstOrDefault(
+                c => c.Telefone == telefone
+                && c.CodigoArea == codigoArea
+                && !c.Removed);
         }
     }
 }

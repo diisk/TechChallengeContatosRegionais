@@ -4,7 +4,7 @@ namespace Domain.Interfaces.ContatoInterfaces
 {
     public interface IContatoRepository : IRepository<Contato>
     {
-        Contato? FindByTelefone(int telefone);
+        Contato? FindByCodigoAreaAndTelefone(int codigoArea, int telefone);
         List<Contato> FindByCodigoArea(int codigoArea);
     }
 }

@@ -26,7 +26,8 @@ namespace Application.Mappers
         }
 
 
-        protected virtual void ApplyCustomMappings(S source, T target){}
+        protected virtual void ApplyCustomMappings(S source, T target) { }
+
 
     }
 }

@@ -10,7 +10,8 @@ namespace Infrastructure.Configurations
         {
             builder.HasOne(c => c.Area)
                 .WithMany()
-                .HasForeignKey(c => c.AreaId)
+                .HasForeignKey(c => c.CodigoArea)
+                .HasPrincipalKey(a=>a.Codigo)
                 .IsRequired();
         }
     }

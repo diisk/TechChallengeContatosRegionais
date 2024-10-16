@@ -5,6 +5,7 @@ using Application.Test.Fixtures;
 using Domain.Entities;
 using Domain.Exceptions.AuthExceptions;
 using Domain.Interfaces.UsuarioInterfaces;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,11 +29,12 @@ namespace Application.Test.Tests
             var mockRepository = new Mock<IUsuarioRepository>();
             var mockCryptoService = new Mock<ICryptoService>();
             var mockTokenService = new Mock<ITokenService>();
+            var mockHttpContextAcessor = new Mock<IHttpContextAccessor>();
 
             Usuario usuario = fixture.UsuarioValido;
             usuario.Login = login;
 
-            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
+            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object,mockHttpContextAcessor.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => authService.registrar(usuario));
@@ -47,11 +49,12 @@ namespace Application.Test.Tests
             var mockRepository = new Mock<IUsuarioRepository>();
             var mockCryptoService = new Mock<ICryptoService>();
             var mockTokenService = new Mock<ITokenService>();
+            var mockHttpContextAcessor = new Mock<IHttpContextAccessor>();
 
             Usuario usuario = fixture.UsuarioValido;
             usuario.Senha = senha;
 
-            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
+            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object, mockHttpContextAcessor.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => authService.registrar(usuario));
@@ -64,6 +67,7 @@ namespace Application.Test.Tests
             var mockRepository = new Mock<IUsuarioRepository>();
             var mockCryptoService = new Mock<ICryptoService>();
             var mockTokenService = new Mock<ITokenService>();
+            var mockHttpContextAcessor = new Mock<IHttpContextAccessor>();
 
             Usuario usuario = fixture.UsuarioValido;
             Usuario usuarioRetorno = fixture.UsuarioValido;
@@ -71,7 +75,7 @@ namespace Application.Test.Tests
 
             mockRepository.Setup(repo => repo.Save(usuario)).Returns(usuarioRetorno);
 
-            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
+            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object, mockHttpContextAcessor.Object);
 
             //WHEN
             var usuarioCadastrado = authService.registrar(usuario);
@@ -88,6 +92,7 @@ namespace Application.Test.Tests
             var mockRepository = new Mock<IUsuarioRepository>();
             var mockCryptoService = new Mock<ICryptoService>();
             var mockTokenService = new Mock<ITokenService>();
+            var mockHttpContextAcessor = new Mock<IHttpContextAccessor>();
 
             Usuario usuario = fixture.UsuarioValido;
             Usuario usuarioRetorno = fixture.UsuarioValido;
@@ -95,7 +100,7 @@ namespace Application.Test.Tests
 
             mockRepository.Setup(repo => repo.FindByLogin(usuario.Login)).Returns(usuarioRetorno);
 
-            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
+            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object, mockHttpContextAcessor.Object);
 
             //WHEN & THEN
             Assert.Throws<LoginIndisponivelException>(() => authService.registrar(usuario));
@@ -115,6 +120,8 @@ namespace Application.Test.Tests
             var mockRepository = new Mock<IUsuarioRepository>();
             var mockCryptoService = new Mock<ICryptoService>();
             var mockTokenService = new Mock<ITokenService>();
+            var mockHttpContextAcessor = new Mock<IHttpContextAccessor>();
+
             var token = "token";
 
             Usuario usuario = fixture.UsuarioValido;
@@ -124,9 +131,9 @@ namespace Application.Test.Tests
             mockRepository.Setup(repo => repo.FindByLogin(usuario.Login)).Returns(usuario);
             mockCryptoService.Setup(repo => repo.VerificarSenhaHasheada("senha", usuario.Senha)).Returns(true);
             mockTokenService.Setup(repo => repo.GetToken(usuario)).Returns(token);
-            
 
-            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object);
+
+            var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object, mockHttpContextAcessor.Object); 
 
             if (deveLancarExcecao)
             {
