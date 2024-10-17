@@ -5,7 +5,7 @@ using Domain.Entities;
 using Domain.Interfaces.AreaInterfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Application.Mappers
+namespace Application.Mappers.AreaMappers
 {
     public class AreaToAreaResponseMapper : CustomMapper<Area, AreaResponse>
     {
@@ -26,9 +26,9 @@ namespace Application.Mappers
         public static void ConfigureMapping(IMapperConfigurationExpression cfg, IServiceCollection services)
         {
             cfg.CreateMap<Area, AreaResponse>().ForMember(
-                    dest=>dest.Cidades,
-                    opt=>opt.MapFrom(
-                        src=>ConverteCidades(src.Cidades)
+                    dest => dest.Cidades,
+                    opt => opt.MapFrom(
+                        src => ConverteCidades(src.Cidades)
                         )
                 );
             services.AddScoped<AreaToAreaResponseMapper>();

@@ -5,6 +5,7 @@ using Application.DTOs.AuthDtos;
 using Application.DTOs.ContatoDtos;
 using Application.Interfaces;
 using Application.Mappers;
+using Application.Mappers.ContatoMappers;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
@@ -23,12 +24,14 @@ namespace API.Controllers
         private readonly IMapper mapper;
         private readonly IResponseService responseService;
         private readonly IContatoService contatoService;
+        private readonly AtualizarContatoRequestToContatoMapper atualizarContatoRequestToContatoMapper;
 
-        public ContatoController(IMapper mapper, IResponseService responseService, IContatoService contatoService)
+        public ContatoController(IMapper mapper, IResponseService responseService, IContatoService contatoService, AtualizarContatoRequestToContatoMapper atualizarContatoRequestToContatoMapper)
         {
             this.mapper = mapper;
             this.responseService = responseService;
             this.contatoService = contatoService;
+            this.atualizarContatoRequestToContatoMapper = atualizarContatoRequestToContatoMapper;
         }
 
         [HttpPost]
@@ -36,6 +39,16 @@ namespace API.Controllers
         {
             var contato = mapper.Map<Contato>(request);
             var retorno = contatoService.CadastrarContato(contato);
+            var response = mapper.Map<ContatoResponse>(retorno);
+            return responseService.Ok(response);
+        }
+
+        [HttpPatch("{id}")]
+        public ActionResult<BaseResponse<ContatoResponse>> AtualizarContato([FromRoute] int id, [FromBody] AtualizarContatoRequest request)
+        {
+            var contato = contatoService.BuscarPorId(id);
+            atualizarContatoRequestToContatoMapper.Map(request, contato);
+            var retorno = contatoService.AtualizarContato(contato);
             var response = mapper.Map<ContatoResponse>(retorno);
             return responseService.Ok(response);
         }

@@ -4,6 +4,8 @@ using Application.DTOs.Auth;
 using Application.DTOs.ContatoDtos;
 using Application.Interfaces;
 using Application.Mappers;
+using Application.Mappers.AreaMappers;
+using Application.Mappers.ContatoMappers;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
@@ -59,11 +61,12 @@ builder.Services.AddScoped<IContatoService, ContatoService>();
 
 builder.Services.AddScoped<AreaToAreaResponseMapper>();
 
-builder.Services.AddAutoMapper(typeof(CustomMapper<RegistrarRequest,Usuario>));
+builder.Services.AddAutoMapper(typeof(CustomMapper<RegistrarRequest, Usuario>));
 var mapperConfig = new MapperConfiguration(cfg =>
 {
-    AreaToAreaResponseMapper.ConfigureMapping(cfg,builder.Services);
-    
+    AreaToAreaResponseMapper.ConfigureMapping(cfg, builder.Services);
+    AtualizarContatoRequestToContatoMapper.ConfigureMapping(cfg, builder.Services);
+
 
     cfg.CreateMap<RegistrarRequest, Usuario>();
     cfg.CreateMap<NovaAreaRequest, Area>();
@@ -117,7 +120,8 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddSwaggerGen(x => {
+builder.Services.AddSwaggerGen(x =>
+{
     x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",

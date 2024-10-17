@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Exceptions.ContatoExceptions;
 using Domain.Interfaces.AreaInterfaces;
@@ -16,25 +15,33 @@ namespace Application.Services
     {
         private readonly IContatoRepository contatoRepository;
         private readonly IAreaService areaService;
-        private readonly IMapper mapper;
 
-        public ContatoService(IContatoRepository contatoRepository, IAreaService areaService, IMapper mapper)
+        public ContatoService(IContatoRepository contatoRepository, IAreaService areaService)
         {
             this.contatoRepository = contatoRepository;
             this.areaService = areaService;
-            this.mapper = mapper;
         }
 
         public Contato AtualizarContato(Contato contato)
         {
-            var dbContato = contatoRepository.FindById(contato.ID);
+
+            contato.Validate();
+            ValidaSeContatoExiste(contato.ID);
+            //contato.Area = null!;
+
+            return contatoRepository.Save(contato);
+        }
+
+        private void ValidaSeContatoExiste(int id)
+        {
+            BuscarPorId(id);
+        }
+
+        public Contato BuscarPorId(int id)
+        {
+            var dbContato = contatoRepository.FindById(id);
             if (dbContato == null) throw new ContatoNaoEncontradoException();
-
-            mapper.Map(contato, dbContato);
-            dbContato.Validate();
-            dbContato.Area = null!;
-
-            return contatoRepository.Save(dbContato);
+            return dbContato;
         }
 
         public Contato CadastrarContato(Contato contato)

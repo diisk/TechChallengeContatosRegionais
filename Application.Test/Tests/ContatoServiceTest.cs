@@ -33,11 +33,11 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ContatoNaoEncontradoException>(() => contatoService.AtualizarContato(contato));
@@ -51,19 +51,15 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contatoRetorno = fixture.ContatoValido;
             var contato = fixture.ContatoValido;
             contato.Nome = nome;
 
             mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contatoRetorno);
-            mockMapper.Setup(mapper => mapper.Map(contato, contatoRetorno)).Callback(() =>
-            {
-                contatoRetorno.Nome = contato.Nome;
-            });
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => contatoService.AtualizarContato(contato));
@@ -78,19 +74,15 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contatoRetorno = fixture.ContatoValido;
             var contato = fixture.ContatoValido;
             contato.Telefone = telefone;
 
             mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contatoRetorno);
-            mockMapper.Setup(mapper => mapper.Map(contato, contatoRetorno)).Callback(() =>
-            {
-                contatoRetorno.Telefone = contato.Telefone;
-            });
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => contatoService.AtualizarContato(contato));
@@ -102,7 +94,6 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
 
             var contatoEncontrado = fixture.ContatoValido;
             var contato = fixture.ContatoValido;
@@ -110,14 +101,10 @@ namespace Application.Test.Tests
             contato.Nome = "Maria Teste da Silva";
 
             mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contatoEncontrado);
-            mockMapper.Setup(mapper => mapper.Map(contato, contatoEncontrado)).Callback(() =>
-            {
-                contatoEncontrado.Telefone = contato.Telefone;
-                contatoEncontrado.Nome = contato.Nome;
-            });
-            mockRepository.Setup(repo => repo.Save(contatoEncontrado)).Returns(contatoEncontrado);
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            mockRepository.Setup(repo => repo.Save(contato)).Returns(contato);
+
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN
             var retorno = contatoService.AtualizarContato(contato);
@@ -135,12 +122,12 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
             contato.Nome = nome;
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => contatoService.CadastrarContato(contato));
@@ -155,12 +142,12 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
             contato.Telefone = telefone;
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ValidacaoException>(() => contatoService.CadastrarContato(contato));
@@ -172,13 +159,13 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
 
             mockRepository.Setup(repo => repo.FindByCodigoAreaAndTelefone(contato.CodigoArea,contato.Telefone)).Returns(contato);
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<ContatoJaCadastradoException>(() => contatoService.CadastrarContato(contato));
@@ -190,13 +177,13 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
 
             mockAreaService.Setup(service => service.BuscarPorCodigoArea(contato.CodigoArea)).Throws<CodigoAreaNaoCadastradoException>();
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN & THEN
             Assert.Throws<CodigoAreaNaoCadastradoException>(() => contatoService.CadastrarContato(contato));
@@ -208,7 +195,7 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
             var area = areaFixture.AreaValida;
@@ -223,7 +210,7 @@ namespace Application.Test.Tests
             });
             mockAreaService.Setup(service => service.BuscarPorCodigoArea(contato.CodigoArea)).Returns(area);
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN
             var retorno = contatoService.CadastrarContato(contato);
@@ -239,7 +226,7 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var contato = fixture.ContatoValido;
             var contatoSalvo = false;
@@ -250,7 +237,7 @@ namespace Application.Test.Tests
                 contatoSalvo = true;
             });
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN
             contatoService.ExcluirContato(contato.ID);
@@ -269,7 +256,7 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            var mockMapper = new Mock<IMapper>();
+            
 
             var listaContatos = fixture.ListaContatosValidos;
             var listaFiltrada = new List<Contato>();
@@ -284,13 +271,51 @@ namespace Application.Test.Tests
 
             mockRepository.Setup(repo => repo.FindAll()).Returns(listaContatos);
 
-            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object, mockMapper.Object);
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 
             //WHEN
             var retorno = contatoService.ListarContatos(codigoArea);
 
             //THEN
             Assert.Equal(retorno, listaFiltrada);
+        }
+
+        [Fact]
+        public void BuscarContato_QuandoContatoNaoEncontrado_DeveLancarExcecao()
+        {
+            //GIVEN
+            var mockRepository = new Mock<IContatoRepository>();
+            var mockAreaService = new Mock<IAreaService>();
+            
+
+            var contato = fixture.ContatoValido;
+
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
+
+            //WHEN & THEN
+            Assert.Throws<ContatoNaoEncontradoException>(() => contatoService.BuscarPorId(contato.ID));
+        }
+
+        [Fact]
+        public void BuscarContato_QuandoContatoEncontrado_DeveRetornarContato()
+        {
+            //GIVEN
+            var mockRepository = new Mock<IContatoRepository>();
+            var mockAreaService = new Mock<IAreaService>();
+            
+
+            var contato = fixture.ContatoValido;
+            contato.ID = 1;
+
+            mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contato);
+
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
+
+            //WHEN
+            var retorno = contatoService.BuscarPorId(contato.ID);
+
+            //THEN
+            Assert.Equal(retorno.ID, contato.ID);
         }
     }
 }
