@@ -27,7 +27,6 @@ namespace Application.Services
 
             contato.Validate();
             ValidaSeContatoExiste(contato.ID);
-            //contato.Area = null!;
 
             return contatoRepository.Save(contato);
         }

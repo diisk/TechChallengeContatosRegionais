@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -21,16 +22,26 @@ namespace Application.Services
 
         private readonly IConfiguration configuration;
         private readonly ICryptoService cryptoService;
+        private readonly ICacheService cacheService;
 
-        public TokenService(IConfiguration configuration, ICryptoService cryptoService)
+        public TokenService(IConfiguration configuration, ICryptoService cryptoService, ICacheService cacheService)
         {
             this.configuration = configuration;
             this.cryptoService = cryptoService;
+            this.cacheService = cacheService;
         }
+
         public string GetToken(Usuario usuario)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var chaveCache = $"TOKEN_{usuario.ID}";
+            var tokenString = cacheService.GetCache(chaveCache);
 
+            if (tokenString != null)
+            {
+                return (string)tokenString;
+            }
+
+            var tokenHandler = new JwtSecurityTokenHandler();
             var secret = Encoding.ASCII.GetBytes(configuration.GetValue<string>(CONFIG_KEY_SECRET)!);
             var chaveCriptografia = configuration.GetValue<string>(CONFIG_KEY_CRYPTO)!;
 
@@ -40,7 +51,7 @@ namespace Application.Services
                     new Claim(CLAIM_TYPE_ID,cryptoService.CriptografarString(usuario.ID.ToString(),chaveCriptografia))
                 }),
 
-                Expires = DateTime.UtcNow.AddHours(8),
+                Expires = DateTime.UtcNow.AddHours(9),
 
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(secret),
@@ -48,7 +59,9 @@ namespace Application.Services
             };
 
             var token = tokenHandler.CreateToken(tokenPropriedades);
-            return tokenHandler.WriteToken(token);
+            tokenString = tokenHandler.WriteToken(token);
+            cacheService.SetCache(chaveCache, tokenString, TimeSpan.FromHours(8));
+            return (string)tokenString;
         }
 
         public int GetUserIdFromClaimsPrincipal(ClaimsPrincipal user)
