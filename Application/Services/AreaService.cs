@@ -1,9 +1,7 @@
 ﻿using Application.Exceptions;
 using Domain.Entities;
-using Domain.Exceptions;
 using Domain.Exceptions.AreaExceptions;
 using Domain.Interfaces.AreaInterfaces;
-using Domain.Interfaces.UsuarioInterfaces;
 
 namespace Application.Services
 {

@@ -1,5 +1,4 @@
-﻿using Application.DTOs.AreaDtos;
-using Application.DTOs.ContatoDtos;
+﻿using Application.DTOs.ContatoDtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces.AreaInterfaces;
@@ -11,6 +10,7 @@ namespace Application.Mappers.ContatoMappers
     {
         private readonly IAreaService areaService;
         private readonly IMapper mapper;
+
 
         public AtualizarContatoRequestToContatoMapper(IMapper mapper, IAreaService areaService) : base(mapper)
         {
@@ -37,6 +37,18 @@ namespace Application.Mappers.ContatoMappers
                 }));
             services.AddScoped<AtualizarContatoRequestToContatoMapper>();
         }
+
+
+        protected override void ApplyCustomMappings(AtualizarContatoRequest source, Contato target)
+        {
+            if (source.CodigoArea.HasValue)
+            {
+                var area = areaService.BuscarPorCodigoArea(source.CodigoArea.Value);
+                target.Area = area;
+            }
+            
+        }
+
 
     }
 }

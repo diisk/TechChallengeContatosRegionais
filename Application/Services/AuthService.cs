@@ -1,17 +1,10 @@
-﻿using Application.DTOs.Auth;
+﻿using Application.DTOs;
 using Application.Exceptions;
 using Application.Interfaces;
-using AutoMapper;
 using Domain.Entities;
-using Domain.Exceptions;
 using Domain.Exceptions.AuthExceptions;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -33,11 +26,11 @@ namespace Application.Services
         public Usuario? GetUsuarioLogado()
         {
             var user = httpContextAccessor.HttpContext.User;
-            if (user.Identity is { IsAuthenticated: false})
+            if (user.Identity is { IsAuthenticated: false })
             {
                 return null;
             }
-            var userId = tokenService.GetUserIdFromClaimsPrincipal(user);
+            var userId = Convert.ToInt32(tokenService.GetIdentifierFromClaimsPrincipal(user));
             var retorno = usuarioRepository.FindById(userId);
 
             if (retorno == null)
@@ -53,7 +46,7 @@ namespace Application.Services
             Usuario? user = usuarioRepository.FindByLogin(login);
             if (user != null && cryptoService.VerificarSenhaHasheada(senha, user.Senha))
             {
-                return tokenService.GetToken(user);
+                return tokenService.GetToken(new TokenData { Identifier = user.ID.ToString() });
             }
             throw new DadosIncorretosException();
         }

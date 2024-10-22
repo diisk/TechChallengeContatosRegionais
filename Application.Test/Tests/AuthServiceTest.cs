@@ -1,3 +1,4 @@
+using Application.DTOs;
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Services;
@@ -7,7 +8,6 @@ using Domain.Exceptions.AuthExceptions;
 using Domain.Interfaces.UsuarioInterfaces;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using System.ComponentModel.DataAnnotations;
 
 namespace Application.Test.Tests
 {
@@ -130,7 +130,7 @@ namespace Application.Test.Tests
 
             mockRepository.Setup(repo => repo.FindByLogin(usuario.Login)).Returns(usuario);
             mockCryptoService.Setup(repo => repo.VerificarSenhaHasheada("senha", usuario.Senha)).Returns(true);
-            mockTokenService.Setup(repo => repo.GetToken(usuario)).Returns(token);
+            mockTokenService.Setup(repo => repo.GetToken(It.Is<TokenData>(td=>td.Identifier==usuario.ID.ToString()))).Returns(token);
 
 
             var authService = new AuthService(mockRepository.Object, mockCryptoService.Object, mockTokenService.Object, mockHttpContextAcessor.Object); 

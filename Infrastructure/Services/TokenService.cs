@@ -1,15 +1,10 @@
-﻿using Application.Interfaces;
-using Domain.Entities;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Application.DTOs;
+using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -31,9 +26,9 @@ namespace Application.Services
             this.cacheService = cacheService;
         }
 
-        public string GetToken(Usuario usuario)
+        public string GetToken(TokenData data)
         {
-            var chaveCache = $"TOKEN_{usuario.ID}";
+            var chaveCache = $"TOKEN_{data.Identifier}";
             var tokenString = cacheService.GetCache(chaveCache);
 
             if (tokenString != null)
@@ -48,7 +43,7 @@ namespace Application.Services
             var tokenPropriedades = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new Claim[] {
-                    new Claim(CLAIM_TYPE_ID,cryptoService.CriptografarString(usuario.ID.ToString(),chaveCriptografia))
+                    new Claim(CLAIM_TYPE_ID,cryptoService.CriptografarString(data.Identifier,chaveCriptografia))
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(9),
@@ -64,13 +59,13 @@ namespace Application.Services
             return (string)tokenString;
         }
 
-        public int GetUserIdFromClaimsPrincipal(ClaimsPrincipal user)
+        public string GetIdentifierFromClaimsPrincipal(ClaimsPrincipal user)
         {
             var chaveCriptografia = configuration.GetValue<string>(CONFIG_KEY_CRYPTO)!;
 
             var idEncryptado = user.FindFirst(CLAIM_TYPE_ID)!.Value;
 
-            var id = Convert.ToInt32(cryptoService.DescriptografarString(idEncryptado, chaveCriptografia));
+            var id = cryptoService.DescriptografarString(idEncryptado, chaveCriptografia);
 
             return id;
         }

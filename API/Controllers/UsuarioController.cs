@@ -2,7 +2,6 @@
 using Application.DTOs.Auth;
 using Application.DTOs.AuthDtos;
 using Application.Interfaces;
-using Application.Services;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces.UsuarioInterfaces;
@@ -29,6 +28,14 @@ namespace API.Controllers
             this.cryptoService = cryptoService;
         }
 
+        /// <summary>
+        /// Gerar uma token para fazer a autenticação do usuário.
+        /// </summary>
+        /// <param name="request">Dados para gerar uma token.</param>
+        /// <returns></returns>
+        /// <response code="200">Sucesso na geração da token.</response>
+        /// <response code="400">Corpo da requisição diferente do esperado.</response>
+        /// <response code="401">Não foi possível autenticar o usuário com os dados fornecidos.</response>
         [HttpPost("logar")]
         [AllowAnonymous]
         public ActionResult<BaseResponse<LogarResponse>> login([FromBody] LogarRequest request)
@@ -38,6 +45,14 @@ namespace API.Controllers
             return responseService.Ok(new LogarResponse { Token = token });
         }
 
+        /// <summary>
+        /// Cadastra um novo usuário no sistema
+        /// </summary>
+        /// <param name="request">Dados para cadastrar um usuário.</param>
+        /// <returns></returns>
+        /// <response code="200">Sucesso no cadastro do usuário.</response>
+        /// <response code="400">Corpo da requisição diferente do esperado.</response>
+        /// <response code="409">O login informado não está disponível.</response>
         [HttpPost("registrar")]
         [AllowAnonymous]
         public ActionResult<BaseResponse<RegistrarResponse>> registrar([FromBody] RegistrarRequest request)

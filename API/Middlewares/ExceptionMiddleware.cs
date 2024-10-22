@@ -1,8 +1,6 @@
 ﻿using Application.Exceptions;
-using Application.Interfaces;
 using Application.Services;
 using System.Net;
-using System.Text.Json;
 
 namespace API.Middlewares
 {

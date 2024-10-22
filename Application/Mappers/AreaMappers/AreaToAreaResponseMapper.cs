@@ -1,5 +1,4 @@
 ﻿using Application.DTOs.AreaDtos;
-using Application.DTOs.ContatoDtos;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces.AreaInterfaces;

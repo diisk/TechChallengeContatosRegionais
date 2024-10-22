@@ -1,18 +1,12 @@
 ﻿using Application.Exceptions;
 using Application.Services;
 using Application.Test.Fixtures;
-using AutoMapper;
 using Domain.Entities;
 using Domain.Exceptions.AreaExceptions;
 using Domain.Exceptions.ContatoExceptions;
 using Domain.Interfaces.AreaInterfaces;
 using Domain.Interfaces.ContatoInterfaces;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Test.Tests
 {
