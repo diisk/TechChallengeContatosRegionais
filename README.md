@@ -48,7 +48,7 @@ A arquitetura do projeto foi dividida em quatro camadas principais:
 ## Passos para o Desenvolvimento do Projeto
 
 1. **Event Storming**:  
-   Realizei o **Event Storming** para mapear os eventos e comportamentos da aplicação. A imagem está na raiz do projeto API com o nome `EventStorming.png`.
+   Realizei o **Event Storming** para mapear os eventos e comportamentos da aplicação. A imagem está na raiz do projeto API com o nome [EventStorming.png](https://github.com/diisk/TechChallengeContatosRegionais/blob/31376fb9366c2438008785024443a014bc98322b/API/EventStorming.png).
 
 2. **Criação do Projeto**:  
    Utilizei um projeto modelo desenvolvido durante as aulas da primeira fase da pós-graduação, adaptando para a Clean Architecture, com a divisão em camadas mencionada acima.
@@ -86,4 +86,4 @@ a
    A documentação da API foi gerada pelo **Swagger** foi modificada pelo summary, permitindo a visualização e teste dos endpoints.
 
 12. **Testes com Insomnia**:  
-   Todos os testes de integração e endpoints foram realizados com **Insomnia**. O arquivo de configuração do Insomnia está na raiz do projeto API com o nome `InsomniaConfig`.
+   Todos os testes de integração e endpoints foram realizados com **Insomnia**. O arquivo de configuração do Insomnia está na raiz do projeto API com o nome [InsomniaConfig](https://github.com/diisk/TechChallengeContatosRegionais/blob/31376fb9366c2438008785024443a014bc98322b/API/InsomniaConfig).
