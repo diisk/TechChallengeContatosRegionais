@@ -45,11 +45,39 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            
+
 
             var contatoRetorno = fixture.ContatoValido;
             var contato = fixture.ContatoValido;
             contato.Nome = nome;
+
+            mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contatoRetorno);
+
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
+
+            //WHEN & THEN
+            Assert.Throws<ValidacaoException>(() => contatoService.AtualizarContato(contato));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("teste")]
+        [InlineData("teste.com")]
+        [InlineData("teste.com@")]
+        [InlineData("@teste")]
+        [InlineData("teste@teste")]
+        [InlineData("teste@.com")]
+        public void AtualizarContato_QuandoEmailInvalido_DeveLancarExcecao(string email)
+        {
+            //GIVEN
+            var mockRepository = new Mock<IContatoRepository>();
+            var mockAreaService = new Mock<IAreaService>();
+
+
+            var contatoRetorno = fixture.ContatoValido;
+            var contato = fixture.ContatoValido;
+            contato.Email = email;
 
             mockRepository.Setup(repo => repo.FindById(contato.ID)).Returns(contatoRetorno);
 
@@ -116,10 +144,35 @@ namespace Application.Test.Tests
             //GIVEN
             var mockRepository = new Mock<IContatoRepository>();
             var mockAreaService = new Mock<IAreaService>();
-            
+
 
             var contato = fixture.ContatoValido;
             contato.Nome = nome;
+
+            var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
+
+            //WHEN & THEN
+            Assert.Throws<ValidacaoException>(() => contatoService.CadastrarContato(contato));
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData("teste")]
+        [InlineData("teste.com")]
+        [InlineData("teste.com@")]
+        [InlineData("@teste")]
+        [InlineData("teste@teste")]
+        [InlineData("teste@.com")]
+        public void CadastrarContato_QuandoEmailInvalido_DeveLancarExcecao(string email)
+        {
+            //GIVEN
+            var mockRepository = new Mock<IContatoRepository>();
+            var mockAreaService = new Mock<IAreaService>();
+
+
+            var contato = fixture.ContatoValido;
+            contato.Email = email;
 
             var contatoService = new ContatoService(mockRepository.Object, mockAreaService.Object);
 

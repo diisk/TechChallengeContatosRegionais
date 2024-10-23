@@ -9,6 +9,10 @@ namespace Domain.Entities
         [Required]
         public required string Nome { get; set; }
         [Required]
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "O endereço de e-mail não é válido.")]
+        //[EmailAddress(ErrorMessage = "O endereço de email não é válido.")] não funcionou em todos os casos
+        public required string Email { get; set; }
+        [Required]
         [Range(10000000,999999999, ErrorMessage = "O número deve conter entre 8 e 9 dígitos.")]
         public required int Telefone { get; set; }
         [Required]
