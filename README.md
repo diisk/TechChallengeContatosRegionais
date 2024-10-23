@@ -86,4 +86,4 @@ a
    A documentação da API foi gerada pelo **Swagger** foi modificada pelo summary, permitindo a visualização e teste dos endpoints.
 
 12. **Testes com Insomnia**:  
-   Todos os testes de integração e endpoints foram realizados com **Insomnia**. O arquivo de configuração do Insomnia está na raiz do projeto API com o nome [InsomniaConfig](https://github.com/diisk/TechChallengeContatosRegionais/blob/31376fb9366c2438008785024443a014bc98322b/API/InsomniaConfig).
+   Todos os testes de integração e endpoints foram realizados com **Insomnia**. O arquivo de configuração do Insomnia está na raiz do projeto API com o nome [InsomniaConfig](https://github.com/diisk/TechChallengeContatosRegionais/blob/782e8a6c2228f5aba41cc17a85de85a68fffb8a6/API/InsomniaConfig).
